@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,8 +22,8 @@ namespace ModernDataGrid
 {
     public sealed partial class DataGrid : UserControl
     {
-        ObservableCollection<Row> rows = new ObservableCollection<Row>();
 
+        MockDataViewModel MockDataViewModel = new MockDataViewModel();
         public DataGrid()
         {
             Populate();
@@ -33,7 +34,7 @@ namespace ModernDataGrid
         {
             for (int i = 0; i < 100; i++)
             {
-                rows.Add(new Row()
+                MockDataViewModel.Rows.Add(new Row()
                 {
                     Data = new MockData()
                     {
@@ -55,7 +56,7 @@ namespace ModernDataGrid
 
         private void GridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            rows.ToList().ForEach(x =>
+            MockDataViewModel.Rows.ToList().ForEach(x =>
             {
                 x.Lengths = new GridLength[] {
                     new GridLength(Column1.ActualWidth, GridUnitType.Pixel),
@@ -87,6 +88,39 @@ namespace ModernDataGrid
         {
             get => lengths;
             set => SetProperty(ref lengths, value);
+        }
+    }
+
+    class MockDataViewModel : ObservableObject
+    {
+        ObservableCollection<Row> rows = new ObservableCollection<Row>();
+        public ObservableCollection<Row> Rows
+        {
+            get => rows;
+            set => SetProperty(ref rows, value);
+        }
+
+        public RelayCommand<string> SortPressed => new RelayCommand<string>(x => Sort(int.Parse(x)));
+
+        public void Sort(int columnNum)
+        {
+            switch(columnNum)
+            {
+                case 0:
+                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col1));
+                    break;
+
+                case 1:
+                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col2));
+                    break;
+
+                case 2:
+                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col3));
+                    break;
+
+                default:
+                    return;
+            }
         }
     }
 }

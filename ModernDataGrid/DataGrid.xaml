@@ -12,11 +12,11 @@
         <DataTemplate x:DataType="local:Row" x:Key="RowsDataTemplate" x:Name="RowsDataTemplate">
             <Grid Padding="0" Margin="0" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{x:Bind Lengths[0], Mode=OneWay}" />
-                    <ColumnDefinition Width="{x:Bind Lengths[1], Mode=OneWay}" />
-                    <ColumnDefinition Width="{x:Bind Lengths[2], Mode=OneWay}" />
+                    <ColumnDefinition Width="{x:Bind ColumnViewModels[0].Length, Mode=OneWay}" />
+                    <ColumnDefinition Width="{x:Bind ColumnViewModels[1].Length, Mode=OneWay}" />
+                    <ColumnDefinition Width="{x:Bind ColumnViewModels[2].Length, Mode=OneWay}" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind Data.Col1}" Grid.Column="0" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind Data.Col1}" Grid.Column="0" TextWrapping="Wrap"/>
                 <TextBlock Text="{x:Bind Data.Col2}" Grid.Column="1" TextWrapping="Wrap" />
                 <TextBlock Text="{x:Bind Data.Col3}" Grid.Column="2" TextWrapping="Wrap" />
             </Grid>

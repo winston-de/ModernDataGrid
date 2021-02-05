@@ -30,9 +30,16 @@ namespace ModernDataGrid
             this.InitializeComponent();
         }
 
+        private ColumnViewModel[] columnViewModels = new ColumnViewModel[]
+        {
+            new ColumnViewModel(),
+            new ColumnViewModel(),
+            new ColumnViewModel(),
+        };
+
         private void Populate()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 MockDataViewModel.Rows.Add(new Row()
                 {
@@ -41,7 +48,8 @@ namespace ModernDataGrid
                         Col1 = RandomString(4),
                         Col2 = RandomString(4),
                         Col3 = RandomString(4),
-                    }
+                    },
+                    ColumnViewModels = columnViewModels,
                 });
             }
         }
@@ -56,14 +64,9 @@ namespace ModernDataGrid
 
         private void GridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            MockDataViewModel.Rows.ToList().ForEach(x =>
-            {
-                x.Lengths = new GridLength[] {
-                    new GridLength(Column1.ActualWidth, GridUnitType.Pixel),
-                    new GridLength(Column2.ActualWidth, GridUnitType.Pixel),
-                    new GridLength(Column3.ActualWidth, GridUnitType.Pixel),
-                };
-            });
+            columnViewModels[0].Length = new GridLength(Column1.ActualWidth, GridUnitType.Pixel);
+            columnViewModels[1].Length = new GridLength(Column2.ActualWidth, GridUnitType.Pixel);
+            columnViewModels[2].Length = new GridLength(Column3.ActualWidth, GridUnitType.Pixel);
         }
     }
     class MockData
@@ -78,16 +81,11 @@ namespace ModernDataGrid
         public MockData Data { get; set; }
 
 
-        private GridLength[] lengths =  new GridLength[] 
+        private ColumnViewModel[] columnViewModels;
+        public ColumnViewModel[] ColumnViewModels
         {
-            new GridLength(1, GridUnitType.Star),
-            new GridLength(1, GridUnitType.Star),
-            new GridLength(1, GridUnitType.Star),
-        };
-        public GridLength[] Lengths
-        {
-            get => lengths;
-            set => SetProperty(ref lengths, value);
+            get => columnViewModels;
+            set => SetProperty(ref columnViewModels, value);
         }
     }
 
@@ -121,6 +119,16 @@ namespace ModernDataGrid
                 default:
                     return;
             }
+        }
+    }
+
+    class ColumnViewModel : ObservableObject
+    {
+        private GridLength length = new GridLength(1, GridUnitType.Star);
+        public GridLength Length
+        {
+            get => length;
+            set => SetProperty(ref length, value);
         }
     }
 }

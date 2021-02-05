@@ -16,9 +16,9 @@
                     <ColumnDefinition Width="{x:Bind ColumnViewModels[1].Length, Mode=OneWay}" />
                     <ColumnDefinition Width="{x:Bind ColumnViewModels[2].Length, Mode=OneWay}" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind Data.Col1}" Grid.Column="0" TextWrapping="Wrap"/>
-                <TextBlock Text="{x:Bind Data.Col2}" Grid.Column="1" TextWrapping="Wrap" />
-                <TextBlock Text="{x:Bind Data.Col3}" Grid.Column="2" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind Data[0]}" Grid.Column="0" TextWrapping="Wrap"/>
+                <TextBlock Text="{x:Bind Data[1]}" Grid.Column="1" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind Data[2]}" Grid.Column="2" TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

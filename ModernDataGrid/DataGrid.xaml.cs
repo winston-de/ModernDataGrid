@@ -26,59 +26,25 @@ namespace ModernDataGrid
         MockDataViewModel MockDataViewModel = new MockDataViewModel();
         public DataGrid()
         {
-            Populate();
+            MockDataViewModel.Populate();
             this.InitializeComponent();
-        }
-
-        private ColumnViewModel[] columnViewModels = new ColumnViewModel[]
-        {
-            new ColumnViewModel(),
-            new ColumnViewModel(),
-            new ColumnViewModel(),
-        };
-
-        private void Populate()
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                MockDataViewModel.Rows.Add(new Row()
-                {
-                    Data = new MockData()
-                    {
-                        Col1 = RandomString(4),
-                        Col2 = RandomString(4),
-                        Col3 = RandomString(4),
-                    },
-                    ColumnViewModels = columnViewModels,
-                });
-            }
-        }
-
-        private static Random random = new Random();
-        public static string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         private void GridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            columnViewModels[0].Length = new GridLength(Column1.ActualWidth, GridUnitType.Pixel);
-            columnViewModels[1].Length = new GridLength(Column2.ActualWidth, GridUnitType.Pixel);
-            columnViewModels[2].Length = new GridLength(Column3.ActualWidth, GridUnitType.Pixel);
+            MockDataViewModel.ColumnViewModels[0].Length = new GridLength(Column1.ActualWidth, GridUnitType.Pixel);
+            MockDataViewModel.ColumnViewModels[1].Length = new GridLength(Column2.ActualWidth, GridUnitType.Pixel);
+            MockDataViewModel.ColumnViewModels[2].Length = new GridLength(Column3.ActualWidth, GridUnitType.Pixel);
         }
     }
     class MockData
     {
-        public string Col1 { get; set; }
-        public string Col2 { get; set; }
-        public string Col3 { get; set; }
+        public string[] Data { get; set; }
     }
 
     class Row : ObservableObject
     {
-        public MockData Data { get; set; }
+        public string[] Data { get; set; }
 
 
         private ColumnViewModel[] columnViewModels;
@@ -98,28 +64,45 @@ namespace ModernDataGrid
             set => SetProperty(ref rows, value);
         }
 
+        public ColumnViewModel[] ColumnViewModels { get; set; } = new ColumnViewModel[]
+        {
+            new ColumnViewModel(),
+            new ColumnViewModel(),
+            new ColumnViewModel(),
+        };
+
         public RelayCommand<string> SortPressed => new RelayCommand<string>(x => Sort(int.Parse(x)));
 
         public void Sort(int columnNum)
         {
-            switch(columnNum)
+            Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data[columnNum]));
+        }
+
+        public void Populate()
+        {
+            for (int i = 0; i < 1000; i++)
             {
-                case 0:
-                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col1));
-                    break;
-
-                case 1:
-                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col2));
-                    break;
-
-                case 2:
-                    Rows = new ObservableCollection<Row>(Rows.ToList().OrderBy(x => x.Data.Col3));
-                    break;
-
-                default:
-                    return;
+                Rows.Add(new Row()
+                {
+                    Data = new string[]
+                    {
+                        RandomString(4),
+                        RandomString(4),
+                        RandomString(4),
+                    },
+                    ColumnViewModels = ColumnViewModels,
+                });
             }
         }
+
+        private static Random random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
     }
 
     class ColumnViewModel : ObservableObject
